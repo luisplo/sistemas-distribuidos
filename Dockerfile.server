@@ -1,0 +1,17 @@
+FROM ubuntu:latest
+
+# Instalar NFS Kernel Server y rpcbind
+RUN apt-get update && \
+    apt-get install -y nfs-kernel-server rpcbind
+
+# Crear un directorio para compartir
+RUN mkdir -p /run/sendsigs.omit.d/ /nfs_share
+
+# Exportar el directorio para compartir a través de NFS
+RUN echo "/nfs_share *(rw,sync,no_subtree_check,no_root_squash)" > /etc/exports
+
+# Exponer el puerto NFS
+EXPOSE 2049
+
+# Iniciar el servidor NFS
+CMD ["/bin/sh", "-c", "service rpcbind start && service nfs-kernel-server start && tail -f /dev/null"]

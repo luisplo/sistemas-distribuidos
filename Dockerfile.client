@@ -1,0 +1,13 @@
+FROM ubuntu:latest
+
+# Instalar NFS Common
+RUN apt-get update && \
+    apt-get install -y nfs-common iputils-ping
+
+# Crear un punto de montaje para el directorio compartido
+RUN mkdir /nfs_mount
+
+# Esperar a que el servidor esté listo antes de montar el directorio
+CMD until ping -c1 nfsv4-server &>/dev/null; do :; done && \
+    mount -t nfs4 nfsv4-server:/nfs_share /nfs_mount && \
+    tail -f /dev/null

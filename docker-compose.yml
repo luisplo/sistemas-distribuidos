@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  nfsv4-server:
+    build:
+      context: .
+      dockerfile: Dockerfile.server
+    privileged: true
+    volumes:
+      - nfs_share:/nfs_share
+    networks:
+      - nfs-network
+
+  nfsv4-client:
+    build:
+      context: .
+      dockerfile: Dockerfile.client
+    privileged: true
+    depends_on:
+      - nfsv4-server
+    networks:
+      - nfs-network
+
+volumes:
+  nfs_share:
+
+networks:
+  nfs-network:
+    driver: bridge
